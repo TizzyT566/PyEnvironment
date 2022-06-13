@@ -43,7 +43,18 @@ namespace PyEnvironment
                         error.Invoke(e.Data);
                 }
             };
-            _python.Start();
+            try
+            {
+                _python.Start();
+            }
+            catch (Exception)
+            {
+                _python.StartInfo.FileName = "python3";
+            }
+            finally
+            {
+                _python.Start();
+            }
             _python.BeginOutputReadLine();
             _python.BeginErrorReadLine();
         }

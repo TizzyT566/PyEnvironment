@@ -24,7 +24,7 @@ _client.MessageReceived += async msg =>
 {
     if (msg.Author.IsBot || msg.Channel.Name != "python") return;
 
-    PyInstance node = instances.GetOrAdd(msg.Channel.Id, id => new(async output => await msg.Channel.SendMessageAsync(output)));
+    PyInstance node = instances.GetOrAdd(msg.Channel.Id, id => new(async output => await msg.Channel.SendMessageAsync(output), async error => await msg.Channel.SendMessageAsync($"> {error}")));
 
     if (msg.Content.StartsWith("```py") && msg.Content.EndsWith("```"))
         await node.WriteAsync(msg.Content[5..^3]);
