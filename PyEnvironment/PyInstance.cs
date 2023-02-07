@@ -11,7 +11,7 @@ namespace PyEnvironment
             if (output is null) throw new ArgumentNullException(nameof(output));
 
             _python = new();
-            _python.StartInfo.FileName = "python";
+            _python.StartInfo.FileName = "py";
             _python.StartInfo.Arguments = "-i";
             _python.StartInfo.RedirectStandardInput = true;
             _python.StartInfo.RedirectStandardOutput = true;
@@ -23,8 +23,7 @@ namespace PyEnvironment
 
             _python.OutputDataReceived += (sender, e) =>
             {
-                if (outputLines > 0) outputLines--;
-                else if (e.Data is not null && e.Data.Trim() != "" && e.Data.Trim() != "undefined")
+                if (e.Data is not null && e.Data.Trim() != "" && e.Data.Trim() != "undefined")
                 {
                     if (e.Data.StartsWith(">>> "))
                         output.Invoke(e.Data[4..]);
@@ -34,7 +33,8 @@ namespace PyEnvironment
             };
             _python.ErrorDataReceived += (sender, e) =>
             {
-                if (errorLines > 0) errorLines--;
+                if (errorLines > 0)
+                    errorLines--;
                 else if (error is not null && e.Data is not null && e.Data.Trim() != "" && e.Data.Trim() != "undefined")
                 {
                     if (e.Data.StartsWith(">>> "))
@@ -57,6 +57,8 @@ namespace PyEnvironment
             }
             _python.BeginOutputReadLine();
             _python.BeginErrorReadLine();
+
+            Task.Run(() => WriteAsync("exit = None"));
         }
 
         public Task WaitForExitAsync() => _python.WaitForExitAsync();
