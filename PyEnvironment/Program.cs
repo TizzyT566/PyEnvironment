@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 DiscordSocketConfig config = new()
 {
     AlwaysDownloadUsers = true,
-    GatewayIntents = GatewayIntents.AllUnprivileged ^ GatewayIntents.GuildScheduledEvents ^ GatewayIntents.GuildInvites,
+    GatewayIntents = GatewayIntents.All,
     MessageCacheSize = 1000
 };
 
@@ -28,7 +28,7 @@ _client.MessageReceived += async msg =>
         async output => await msg.Channel.SendMessageAsync(output),
         async error => await msg.Channel.SendMessageAsync($"> {error}")));
 
-    if (msg.Content.StartsWith("```py") && msg.Content.EndsWith("```"))
+    if (msg.Content.StartsWith("```py\n") && msg.Content.EndsWith("\n```"))
         await node.WriteAsync(msg.Content[5..^3]);
 };
 
